@@ -24,6 +24,10 @@ import org.springframework.http.ResponseEntity;
 @SuppressWarnings("squid:S2259")
 public class UserControllerTests {
 
+	private static final String PASSWORD = "qazxsw123";
+
+	private static final String USER = "admin";
+
 	@LocalServerPort
 	private int port;
 
@@ -42,7 +46,7 @@ public class UserControllerTests {
 	public void insert() {
 		var userVO = new UserVO(null, "Aldivone Correia", "aldivone", "qazxsw#123", null, null, "aldivone@gmail.com",
 				false);
-		var hasBody = this.restTemplate.postForEntity(url, userVO, URI.class);
+		var hasBody = this.restTemplate.withBasicAuth(USER, PASSWORD).postForEntity(url, userVO, URI.class);
 		var actual = hasBody.getHeaders().getLocation();
 		assertThat(actual).isNotNull();
 		assertThat(actual.toString()).isEqualTo("http://localhost:8080/api/v1/users/1");
@@ -52,7 +56,7 @@ public class UserControllerTests {
 	@Test
 	@Order(2)
 	public void getUserAll() {
-		var hasBody = this.restTemplate
+		var hasBody = this.restTemplate.withBasicAuth(USER, PASSWORD)
 				.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<List<UserVO>>() {
 				}).getBody();
 		assertThat(hasBody).asList().size().isEqualTo(1);
@@ -61,7 +65,7 @@ public class UserControllerTests {
 	@Test
 	@Order(3)
 	public void getFindById() {
-		var userVO = this.restTemplate
+		var userVO = this.restTemplate.withBasicAuth(USER, PASSWORD)
 				.exchange(url + "/1", HttpMethod.GET, null, new ParameterizedTypeReference<UserVO>() {
 				}).getBody();
 		assertThat(userVO).isNotNull();
@@ -71,16 +75,16 @@ public class UserControllerTests {
 	@Test
 	@Order(4)
 	public void update() {
-		var userVO = this.restTemplate
+		var userVO = this.restTemplate.withBasicAuth(USER, PASSWORD)
 				.exchange(url + "/1", HttpMethod.GET, null, new ParameterizedTypeReference<UserVO>() {
 				}).getBody();
 		userVO.setEmail("aldivone@hotmail.com");
 
-		this.restTemplate.exchange(url + "/1", HttpMethod.PUT, new HttpEntity<UserVO>(userVO),
-				new ParameterizedTypeReference<UserVO>() {
+		this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(url + "/1", HttpMethod.PUT,
+				new HttpEntity<UserVO>(userVO), new ParameterizedTypeReference<UserVO>() {
 				}).getBody();
 
-		var userVOUpdated = this.restTemplate
+		var userVOUpdated = this.restTemplate.withBasicAuth(USER, PASSWORD)
 				.exchange(url + "/1", HttpMethod.GET, null, new ParameterizedTypeReference<UserVO>() {
 				}).getBody();
 
@@ -92,9 +96,10 @@ public class UserControllerTests {
 	@Test
 	@Order(5)
 	public void remove() {
-		this.restTemplate.exchange(url + "/1", HttpMethod.DELETE, null, ResponseEntity.class);
+		this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(url + "/1", HttpMethod.DELETE, null,
+				ResponseEntity.class);
 
-		var userRemove = this.restTemplate
+		var userRemove = this.restTemplate.withBasicAuth(USER, PASSWORD)
 				.exchange(url + "/1", HttpMethod.GET, null, new ParameterizedTypeReference<UserVO>() {
 				}).getBody();
 
