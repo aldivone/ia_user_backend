@@ -1,5 +1,6 @@
 package br.com.dell.backend.user;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,11 +40,11 @@ public class UserController {
 	}
 
 	@PostMapping
-	public ResponseEntity<UserVO> insert(@RequestBody UserVO userVO) {
+	public ResponseEntity<URI> insert(@RequestBody UserVO userVO) {
 		var createdUser = User.toUserVO(repository.save(UserVO.toUser(userVO)));
 		var uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(createdUser.getId())
 				.toUri();
-		return ResponseEntity.created(uri).body(createdUser);
+		return ResponseEntity.created(uri).build();
 	}
 
 	@PutMapping(value = "/{id}")

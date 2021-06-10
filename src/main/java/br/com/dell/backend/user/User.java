@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotEmpty;
@@ -14,7 +16,7 @@ import javax.validation.constraints.NotEmpty;
 public class User {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@NotEmpty
@@ -54,6 +56,16 @@ public class User {
 		this.updatedDate = updatedDate;
 		this.email = email;
 		this.admin = admin;
+	}
+
+	@PrePersist
+	private void prePersist() {
+		this.createdDate = new Date();
+	}
+
+	@PreUpdate
+	private void preUpdate() {
+		this.updatedDate = new Date();
 	}
 
 	public Long getId() {
