@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,12 +26,14 @@ public class UserController {
 	private UserRepository repository;
 
 	@GetMapping
+	@CrossOrigin(origins = "http://localhost:4200")
 	public ResponseEntity<List<UserVO>> getAll() {
 		List<User> users = repository.findAll();
 		return ResponseEntity.ok(users.stream().map(User::toUserVO).collect(Collectors.toList()));
 	}
 
 	@GetMapping(value = "/{id}")
+	@CrossOrigin(origins = "http://localhost:4200")
 	public ResponseEntity<UserVO> getFindById(@PathVariable() Long id) {
 		Optional<User> user = repository.findById(id);
 		if (user.isPresent())
@@ -40,6 +43,7 @@ public class UserController {
 	}
 
 	@PostMapping
+	@CrossOrigin(origins = "http://localhost:4200")
 	public ResponseEntity<URI> insert(@RequestBody UserVO userVO) {
 		var createdUser = User.toUserVO(repository.save(UserVO.toUser(userVO)));
 		var uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(createdUser.getId())
@@ -48,6 +52,7 @@ public class UserController {
 	}
 
 	@PutMapping(value = "/{id}")
+	@CrossOrigin(origins = "http://localhost:4200")
 	public ResponseEntity<UserVO> update(@RequestBody UserVO userVO, @PathVariable() Long id) {
 		if (!repository.findById(id).isPresent()) {
 			return ResponseEntity.noContent().build();
@@ -56,12 +61,19 @@ public class UserController {
 	}
 
 	@DeleteMapping(value = "/{id}")
+	@CrossOrigin(origins = "http://localhost:4200")
 	public ResponseEntity<Void> remove(@PathVariable() Long id) {
 		if (!repository.findById(id).isPresent()) {
 			return ResponseEntity.noContent().build();
 		}
 		repository.deleteById(id);
 		return ResponseEntity.noContent().build();
+	}
+	
+	@GetMapping(value = "/login")
+	@CrossOrigin(origins = "http://localhost:4200")
+	public ResponseEntity<String> login() {
+		return ResponseEntity.ok("login bem sucedido");
 	}
 
 }
