@@ -9,3 +9,5 @@ CREATE TABLE user (
    admin INT NOT NULL,   
    PRIMARY KEY (id) 
 );
+
+INSERT INTO user (id, name, password, login, created_date, email, admin) VALUES (100000000, 'Administrador', 'qazxsw123', 'admin', current_date, 'admin@gmail.com', 1);

@@ -16,12 +16,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.cors();
 		http.csrf().disable().authorizeRequests().antMatchers("/**").fullyAuthenticated().and().httpBasic();
-		
+
 	}
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.inMemoryAuthentication().withUser("admin").password("{noop}qazxsw123").roles("USER");
+		auth.inMemoryAuthentication().withUser("admin").password("{noop}qazxsw123").roles("USER").and()
+				.withUser("jose").password("{noop}12345").roles("USER");
 	}
 
 }

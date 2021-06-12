@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -53,11 +56,19 @@ public class UserController {
 
 	@PutMapping(value = "/{id}")
 	@CrossOrigin(origins = "http://localhost:4200")
-	public ResponseEntity<UserVO> update(@RequestBody UserVO userVO, @PathVariable() Long id) {
+	public ResponseEntity<?> update(@RequestBody UserVO userVO, @PathVariable() Long id) {
 		if (!repository.findById(id).isPresent()) {
 			return ResponseEntity.noContent().build();
 		}
-		return ResponseEntity.ok(User.toUserVO(repository.save(UserVO.toUser(userVO))));
+		var userVOTemp = UserVO.toUser(userVO);
+		var userLogin = this.repository.findByLogin(getLoginUserPrincipal());
+		if (!userLogin.isAdmin() && (!userLogin.getLogin().equals(userVOTemp.getLogin())
+				&& !userLogin.getPassword().equals(userVOTemp.getPassword()))) {
+			return ResponseEntity.status(422)
+					.body("{\"mensagem\":\"Somente usuários admin podem alterar a senha de outros usuários\"}");
+		}
+
+		return ResponseEntity.ok(User.toUserVO(repository.save(userVOTemp)));
 	}
 
 	@DeleteMapping(value = "/{id}")
@@ -69,11 +80,20 @@ public class UserController {
 		repository.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
-	
-	@GetMapping(value = "/login")
+
+	@GetMapping(value = "/acesso")
 	@CrossOrigin(origins = "http://localhost:4200")
-	public ResponseEntity<String> login() {
-		return ResponseEntity.ok("login bem sucedido");
+	public ResponseEntity<UserVO> login(@RequestParam String login) {
+		return ResponseEntity.ok(User.toUserVO(this.repository.findByLogin(login)));
+	}
+
+	public String getLoginUserPrincipal() {
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (principal instanceof UserDetails) {
+			return ((UserDetails) principal).getUsername();
+		} else {
+			return principal.toString();
+		}
 	}
 
 }
