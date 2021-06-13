@@ -21,6 +21,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+@Api(value = "Crud para cadastros de usuários", tags = "Crud para cadastras de usuários" )	
 @RestController
 @RequestMapping(value = "v1/users")
 public class UserController {
@@ -29,6 +33,7 @@ public class UserController {
 	private UserRepository repository;
 
 	@GetMapping
+	@ApiOperation(value = "Listar os usuários cadastrados")
 	@CrossOrigin(origins = "http://localhost:4200")
 	public ResponseEntity<List<UserVO>> getAll() {
 		List<User> users = repository.findAll();
@@ -36,6 +41,7 @@ public class UserController {
 	}
 
 	@GetMapping(value = "/{id}")
+	@ApiOperation(value = "Buscar um usuário por seu id")
 	@CrossOrigin(origins = "http://localhost:4200")
 	public ResponseEntity<UserVO> getFindById(@PathVariable() Long id) {
 		Optional<User> user = repository.findById(id);
@@ -46,6 +52,7 @@ public class UserController {
 	}
 
 	@PostMapping
+	@ApiOperation(value = "Incluir um usuário no sistema") 
 	@CrossOrigin(origins = "http://localhost:4200")
 	public ResponseEntity<URI> insert(@RequestBody UserVO userVO) {
 		var createdUser = User.toUserVO(repository.save(UserVO.toUser(userVO)));
@@ -55,6 +62,7 @@ public class UserController {
 	}
 
 	@PutMapping(value = "/{id}")
+	@ApiOperation(value = "Altera os dados de um usuário no sistema")
 	@CrossOrigin(origins = "http://localhost:4200")
 	public ResponseEntity<?> update(@RequestBody UserVO userVO, @PathVariable() Long id) {
 		if (!repository.findById(id).isPresent()) {
@@ -72,6 +80,7 @@ public class UserController {
 	}
 
 	@DeleteMapping(value = "/{id}")
+	@ApiOperation(value = "Remover um usuário do sistema")
 	@CrossOrigin(origins = "http://localhost:4200")
 	public ResponseEntity<Void> remove(@PathVariable() Long id) {
 		if (!repository.findById(id).isPresent()) {
@@ -82,6 +91,7 @@ public class UserController {
 	}
 
 	@GetMapping(value = "/acesso")
+	@ApiOperation(value = "Buscar os dados do usuário autenticando no sistema")
 	@CrossOrigin(origins = "http://localhost:4200")
 	public ResponseEntity<UserVO> login(@RequestParam String login) {
 		return ResponseEntity.ok(User.toUserVO(this.repository.findByLogin(login)));

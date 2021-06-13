@@ -5,7 +5,7 @@
 3. Testes unitários para api rest =>  ok
 4. Colocar a autenticação spring security => ok
 5. Colocar o cache da autenticação no redis do spring security => ok
-6. Criar a interface com o angular
+6. Criar a interface com o angular => ok
 7. Criar fila com rabbitmq
 8. Criar fila com kafka
 9. Criar implementação para consumir a fila rabbitmq
