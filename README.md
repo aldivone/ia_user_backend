@@ -6,11 +6,12 @@
 4. Colocar a autenticação spring security => ok
 5. Colocar o cache da autenticação no redis do spring security => ok
 6. Criar a interface com o angular => ok
-7. Criar fila com rabbitmq
-8. Criar fila com kafka
-9. Criar implementação para consumir a fila rabbitmq
-10. Criar implementação para consumir a fila kafka
-11. Implementar o envio de e-mail
+7. Buscar os usuários da autenticação do banco de dados gravar a senha criptografada => ok
+8. Criar fila com rabbitmq
+9. Criar fila com kafka
+10. Criar implementação para consumir a fila rabbitmq
+11. Criar implementação para consumir a fila kafka
+12. Implementar o envio de e-mail
 
 
 ## Subir docker compose

@@ -12,6 +12,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotEmpty;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 @Entity
 public class User {
 
@@ -61,6 +63,7 @@ public class User {
 	@PrePersist
 	private void prePersist() {
 		this.createdDate = new Date();
+		this.password = new BCryptPasswordEncoder().encode(this.password);
 	}
 
 	@PreUpdate

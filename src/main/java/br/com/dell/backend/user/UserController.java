@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +25,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-@Api(value = "Crud para cadastros de usuários", tags = "Crud para cadastras de usuários" )	
+@Api(value = "Crud para cadastros de usuários", tags = "Crud para cadastras de usuários")
 @RestController
 @RequestMapping(value = "v1/users")
 public class UserController {
@@ -52,7 +53,7 @@ public class UserController {
 	}
 
 	@PostMapping
-	@ApiOperation(value = "Incluir um usuário no sistema") 
+	@ApiOperation(value = "Incluir um usuário no sistema")
 	@CrossOrigin(origins = "http://localhost:4200")
 	public ResponseEntity<URI> insert(@RequestBody UserVO userVO) {
 		var createdUser = User.toUserVO(repository.save(UserVO.toUser(userVO)));
@@ -69,11 +70,15 @@ public class UserController {
 			return ResponseEntity.noContent().build();
 		}
 		var userVOTemp = UserVO.toUser(userVO);
-		var userLogin = this.repository.findByLogin(getLoginUserPrincipal());
+		var userDatabase = repository.findByLogin(userVO.getLogin());
+		var userLogin = getLoginUserPrincipal();
 		if (!userLogin.isAdmin() && (!userLogin.getLogin().equals(userVOTemp.getLogin())
-				&& !userLogin.getPassword().equals(userVOTemp.getPassword()))) {
+				&& !userDatabase.getPassword().equals(userVOTemp.getPassword()))) {
 			return ResponseEntity.status(422)
 					.body("{\"mensagem\":\"Somente usuários admin podem alterar a senha de outros usuários\"}");
+		}
+		if (!userDatabase.getPassword().equals(userVOTemp.getPassword())) {
+			userVOTemp.setPassword(new BCryptPasswordEncoder().encode(userVOTemp.getPassword()));
 		}
 
 		return ResponseEntity.ok(User.toUserVO(repository.save(userVOTemp)));
@@ -97,12 +102,12 @@ public class UserController {
 		return ResponseEntity.ok(User.toUserVO(this.repository.findByLogin(login)));
 	}
 
-	public String getLoginUserPrincipal() {
+	public UserVO getLoginUserPrincipal() {
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if (principal instanceof UserDetails) {
-			return ((UserDetails) principal).getUsername();
+			return (UserVO) principal;
 		} else {
-			return principal.toString();
+			return User.toUserVO(this.repository.findByLogin(principal.toString()));
 		}
 	}
 
