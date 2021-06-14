@@ -12,25 +12,24 @@ import org.springframework.stereotype.Component;
 import br.com.dell.backend.email.Email;
 
 @Component
-public class ReceiverMDB {
+public class RabbitMQConsumer {
 
-	Logger logger = Logger.getLogger(ReceiverMDB.class.getCanonicalName());
+	Logger logger = Logger.getLogger(RabbitMQConsumer.class.getCanonicalName());
 
 	@Autowired
 	private JavaMailSender mailSender;
 
 	public void receiveMessage(Email email) {
-
 		try {
 			var mail = mailSender.createMimeMessage();
 			var helper = new MimeMessageHelper(mail);
 			helper.setTo(email.getDestinatario());
-			helper.setSubject("Mensagem do usuarioApp");
+			helper.setSubject("RabbitMQ - Mensagem do usuarioApp");
 			helper.setText(email.getConteudo(), true);
 			mailSender.send(mail);
-			logger.info("Email enviado com sucesso!");
+			logger.info("RabbitMQ - Email enviado com sucesso!");
 		} catch (Exception e) {
-			logger.info("Problema no envio do e-mail. Detalhes: " + e.getMessage());
+			logger.info("RabbitMQ - Problema no envio do e-mail. Detalhes: " + e.getMessage());
 		}
 	}
 

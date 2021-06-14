@@ -64,9 +64,4 @@ public class Email implements Serializable {
 		return true;
 	}
 
-	@Override
-	public String toString() {
-		return "Email [conteudo=" + conteudo + ", destinatario=" + destinatario + "]";
-	}
-
 }

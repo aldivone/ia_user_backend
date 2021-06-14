@@ -29,7 +29,7 @@ public class MessagingRabbitMQ {
 
 	@Bean
 	Binding binding(Queue queue, TopicExchange exchange) {
-		return BindingBuilder.bind(queue).to(exchange).with("br.com.altantico.#");
+		return BindingBuilder.bind(queue).to(exchange).with("altantico#");
 	}
 
 	@Bean
@@ -43,7 +43,7 @@ public class MessagingRabbitMQ {
 	}
 
 	@Bean
-	MessageListenerAdapter listenerAdapter(ReceiverMDB receiver) {
+	MessageListenerAdapter listenerAdapter(RabbitMQConsumer receiver) {
 		return new MessageListenerAdapter(receiver, "receiveMessage");
 	}
 
