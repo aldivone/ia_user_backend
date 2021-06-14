@@ -1,4 +1,4 @@
-package br.com.dell.backend.config;
+package br.com.dell.backend.config.autentication;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
