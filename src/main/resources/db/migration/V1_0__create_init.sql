@@ -6,6 +6,6 @@ CREATE TABLE user (
    created_date TIMESTAMP NOT NULL,
    updated_date TIMESTAMP NULL,
    email VARCHAR(100) NOT NULL,
-   admin INT NOT NULL,   
+   admin BOOLEAN NOT NULL,   
    PRIMARY KEY (id) 
 );

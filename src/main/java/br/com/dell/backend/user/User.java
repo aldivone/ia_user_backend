@@ -2,6 +2,7 @@ package br.com.dell.backend.user;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -31,10 +32,12 @@ public class User {
 	private String password;
 
 	@NotEmpty
+	@Column(name = "created_date")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "updated_date")
 	private Date updatedDate;
 
 	@NotEmpty
